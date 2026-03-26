@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Онлайн-лист персонажа</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar no-print">
+        <div class="topbar__text">
+          <p class="eyebrow">Функциональный лист</p>
+          <h1>Онлайн-лист персонажа</h1>
+          <p class="helper">
+            Аккуратная форма на чистом HTML/CSS/JS: отдельное поле на каждую строку,
+            кликабельные точки и автосохранение в браузере.
+          </p>
+        </div>
+        <div class="topbar__actions">
+          <button type="button" class="action-button" id="theme-toggle" aria-pressed="false">
+            Тёмная тема
+          </button>
+          <button type="button" class="action-button action-button--danger" id="reset-sheet">
+            Очистить
+          </button>
+        </div>
+      </section>
+
+      <section class="status-card no-print" aria-live="polite" id="save-status">
+        Черновик автоматически сохраняется в браузере.
+      </section>
+
+      <section class="pages">
+        <article class="sheet-page">
+          <section class="sheet-card identity-card">
+            <div class="identity-grid">
+              <label class="field-block field-block--weakness">
+                <span class="field-block__label">Слабость</span>
+                <span class="line-input line-input--center"><input type="text" data-field="weakness" /></span>
+              </label>
+
+              <label class="field-block field-block--name field-block--center">
+                <span class="field-block__label field-block__label--large">Имя</span>
+                <span class="line-input line-input--center"><input type="text" data-field="name" /></span>
+              </label>
+
+              <label class="field-block field-block--method field-block--center">
+                <span class="field-block__label">Метод</span>
+                <span class="line-input line-input--center"><input type="text" data-field="method" /></span>
+              </label>
+
+              <label class="field-block field-block--enemy">
+                <span class="field-block__label">Враг</span>
+                <span class="line-input line-input--center"><input type="text" data-field="enemy" /></span>
+              </label>
+
+              <label class="field-block field-block--age field-block--narrow field-block--center">
+                <span class="field-block__label">Возраст</span>
+                <span class="line-input line-input--center"><input type="text" data-field="age" /></span>
+              </label>
+
+              <label class="field-block field-block--goal field-block--center">
+                <span class="field-block__label">Цель</span>
+                <span class="line-input line-input--center"><input type="text" data-field="goal" /></span>
+              </label>
+
+              <label class="field-block field-block--dominant field-block--wide field-block--center">
+                <span class="field-block__label field-block__label--large">Ведущая сторона</span>
+                <span class="line-input line-input--center"><input type="text" data-field="dominantSide" /></span>
+              </label>
+            </div>
+          </section>
+
+          <section class="stat-grid">
+            <section class="stat-panel">
+              <div class="ribbon">Телосложение</div>
+              <div class="track-head">
+                <span class="track-head__label">max</span>
+                <label class="line-input line-input--mini line-input--center">
+                  <input type="text" data-field="bodyMax" />
+                </label>
+              </div>
+              <div
+                class="track track--two-row"
+                data-track="bodyDots"
+                data-count="10"
+                data-label="Телосложение"
+              ></div>
+              <h3 class="mini-title">Снаряжение</h3>
+              <div
+                class="line-list"
+                data-line-list
+                data-prefix="equipment"
+                data-count="8"
+                data-label="Снаряжение"
+              ></div>
+            </section>
+
+            <section class="stat-panel stat-panel--center">
+              <div class="ribbon">Иммунитет</div>
+              <div class="track-head">
+                <span class="track-head__label">max</span>
+                <label class="line-input line-input--mini line-input--center">
+                  <input type="text" data-field="immunityMax" />
+                </label>
+              </div>
+              <div
+                class="track track--two-row"
+                data-track="immunityDots"
+                data-count="10"
+                data-label="Иммунитет"
+              ></div>
+              <h3 class="mini-title">Свойства иммунитета</h3>
+              <div
+                class="line-list line-list--indexed line-list--centered"
+                data-line-list
+                data-prefix="immunityTrait"
+                data-count="10"
+                data-label="Свойство иммунитета"
+                data-indexed="true"
+                data-threshold-field="immunityMax"
+              ></div>
+            </section>
+
+            <section class="stat-panel">
+              <div class="ribbon">Разум</div>
+              <div class="track-head">
+                <span class="track-head__label">max</span>
+                <label class="line-input line-input--mini line-input--center">
+                  <input type="text" data-field="mindMax" />
+                </label>
+              </div>
+              <div
+                class="track track--two-row"
+                data-track="mindDots"
+                data-count="10"
+                data-label="Разум"
+              ></div>
+              <h3 class="mini-title">Специализация</h3>
+              <div
+                class="line-list line-list--compact"
+                data-line-list
+                data-prefix="specialization"
+                data-count="2"
+                data-label="Специализация"
+              ></div>
+              <h3 class="mini-title mini-title--spaced">Таланты/Умения</h3>
+              <div
+                class="line-list"
+                data-line-list
+                data-prefix="talent"
+                data-count="8"
+                data-label="Талант"
+              ></div>
+            </section>
+          </section>
+        </article>
+
+        <article class="sheet-page">
+          <section class="sheet-card stacked-card">
+            <div class="box-title">Свойства снаряжения</div>
+            <div
+              class="line-list line-list--wide"
+              data-line-list
+              data-prefix="equipmentTrait"
+              data-count="6"
+              data-label="Свойство снаряжения"
+            ></div>
+          </section>
+
+          <section class="sheet-card stacked-card">
+            <div class="box-title">Ресурсы</div>
+            <div
+              class="line-list line-list--wide"
+              data-line-list
+              data-prefix="resource"
+              data-count="5"
+              data-label="Ресурс"
+            ></div>
+          </section>
+
+          <section class="sheet-card squad-card">
+            <div class="box-title">Отряд/Специалист</div>
+            <div
+              class="track track--single-row"
+              data-track="squadDots"
+              data-count="10"
+              data-label="Отряд или специалист"
+            ></div>
+            <label class="field-block field-block--wide field-block--center">
+              <span class="field-block__label">Специализация</span>
+              <span class="line-input line-input--center"><input type="text" data-field="squadSpecialization" /></span>
+            </label>
+          </section>
+
+          <section class="sheet-card contacts-card">
+            <div class="contacts-grid">
+              <div class="contacts-group">
+                <div class="contact-column">
+                  <h3 class="contacts-title">Кто</h3>
+                  <div class="line-list line-list--tight" data-line-list data-prefix="leftWho" data-count="5" data-label="Кто слева"></div>
+                </div>
+                <div class="contact-column">
+                  <h3 class="contacts-title">Снаряжение</h3>
+                  <div class="line-list line-list--tight" data-line-list data-prefix="leftGear" data-count="5" data-label="Снаряжение слева"></div>
+                </div>
+                <div class="contact-column">
+                  <h3 class="contacts-title">Где</h3>
+                  <div class="line-list line-list--tight" data-line-list data-prefix="leftWhere" data-count="5" data-label="Где слева"></div>
+                </div>
+              </div>
+              <div class="contacts-group">
+                <div class="contact-column">
+                  <h3 class="contacts-title">Кто</h3>
+                  <div class="line-list line-list--tight" data-line-list data-prefix="rightWho" data-count="5" data-label="Кто справа"></div>
+                </div>
+                <div class="contact-column">
+                  <h3 class="contacts-title">Снаряжение</h3>
+                  <div class="line-list line-list--tight" data-line-list data-prefix="rightGear" data-count="5" data-label="Снаряжение справа"></div>
+                </div>
+                <div class="contact-column">
+                  <h3 class="contacts-title">Где</h3>
+                  <div class="line-list line-list--tight" data-line-list data-prefix="rightWhere" data-count="5" data-label="Где справа"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </article>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
