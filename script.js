@@ -135,6 +135,7 @@ createLineLists();
 
 const fieldElements = [...document.querySelectorAll("[data-field]")];
 const trackElements = [...document.querySelectorAll("[data-track]")];
+const dynamicTrackElements = trackElements.filter((trackElement) => trackElement.dataset.trackLimitField);
 const thresholdLists = [...document.querySelectorAll("[data-threshold-field]")];
 const dynamicLineLists = [...document.querySelectorAll("[data-dynamic-limit-field]")];
 const saveStatus = document.getElementById("save-status");
@@ -236,6 +237,7 @@ function syncUiState() {
   const syncTasks = [
     ["threshold lists", syncThresholdLists],
     ["dynamic lists", syncDynamicLineLists],
+    ["dynamic tracks", syncDynamicTracks],
     ["durability tones", syncDurabilityFields],
     ["resource transfer", syncResourceTransfers],
     ["resource controls", syncResourceControlStates],
@@ -289,6 +291,34 @@ function createDots(trackElement) {
     });
 
     trackElement.append(button);
+  });
+}
+
+function syncDynamicTracks() {
+  dynamicTrackElements.forEach((trackElement) => {
+    const trackName = trackElement.dataset.track;
+    const fieldName = trackElement.dataset.trackLimitField;
+    const buttons = [...trackElement.querySelectorAll(".track__dot")];
+    const rawValue = fieldName
+      ? state.fields[fieldName] ?? document.querySelector(`[data-field="${fieldName}"]`)?.value ?? ""
+      : "";
+    const visibleCount = Math.max(0, Math.min(buttons.length, Number.parseInt(String(rawValue), 10) || 0));
+
+    if (Array.isArray(state.tracks[trackName])) {
+      state.tracks[trackName] = state.tracks[trackName].map((isActive, index) => (
+        index < visibleCount ? isActive : false
+      ));
+    }
+
+    buttons.forEach((button, index) => {
+      const isVisible = index < visibleCount;
+      button.hidden = !isVisible;
+
+      if (!isVisible) {
+        button.classList.remove("is-active");
+        button.setAttribute("aria-pressed", "false");
+      }
+    });
   });
 }
 
