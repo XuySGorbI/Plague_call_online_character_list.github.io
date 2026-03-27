@@ -491,7 +491,7 @@ function syncResourceControlStates() {
     const parsed = parseResourceEntry(field?.value ?? "");
     const hasEntry = Boolean(parsed.name) && Number.isFinite(parsed.amount) && Number.isFinite(parsed.max);
 
-    stepper.classList.toggle("is-hidden", !hasEntry);
+    stepper.classList.toggle("is-empty", !hasEntry);
 
     buttons.forEach((button) => {
       const step = Number.parseInt(button.dataset.resourceStep || "0", 10);

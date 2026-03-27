@@ -566,8 +566,8 @@ body[data-theme="dark"]::before {
   align-self: end;
 }
 
-.resource-stepper.is-hidden {
-  display: none;
+.resource-stepper.is-empty {
+  opacity: 0.92;
 }
 
 .resource-stepper__button {
