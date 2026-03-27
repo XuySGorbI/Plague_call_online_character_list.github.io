@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Онлайн-лист персонажа</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=20260327-4" />
   </head>
   <body>
     <main class="app-shell">
@@ -88,12 +88,30 @@
                 data-label="Телосложение"
               ></div>
               <h3 class="mini-title">Снаряжение</h3>
+              <div class="sub-control">
+                <span class="sub-control__label">Мод.</span>
+                <label class="line-input line-input--micro line-input--center">
+                  <input type="text" data-field="equipmentMultiplier" data-default-value="1.5" />
+                </label>
+                <span class="sub-control__meta" id="equipment-capacity">0 мест</span>
+              </div>
               <div
-                class="line-list"
+                class="line-list line-list--indexed"
                 data-line-list
                 data-prefix="equipment"
-                data-count="8"
+                data-count="15"
                 data-label="Снаряжение"
+                data-indexed="true"
+                data-dynamic-limit-field="bodyMax"
+                data-dynamic-limit-multiplier-field="equipmentMultiplier"
+                data-capacity-display-id="equipment-capacity"
+                data-secondary-prefix="equipmentCondition"
+                data-secondary-placeholder="проч/кач"
+                data-secondary-label="Качество и прочность"
+                data-secondary-tone="durability"
+                data-transfer-target="resource"
+                data-transfer-state-prefix="equipmentResource"
+                data-transfer-label="Перенести в ресурсы"
               ></div>
             </section>
 
@@ -172,11 +190,12 @@
           <section class="sheet-card stacked-card">
             <div class="box-title">Ресурсы</div>
             <div
-              class="line-list line-list--wide"
+              class="line-list line-list--wide line-list--resource-grid"
               data-line-list
               data-prefix="resource"
-              data-count="5"
+              data-count="9"
               data-label="Ресурс"
+              data-resource-controls="true"
             ></div>
           </section>
 
@@ -230,6 +249,6 @@
       </section>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20260327-4"></script>
   </body>
 </html>
