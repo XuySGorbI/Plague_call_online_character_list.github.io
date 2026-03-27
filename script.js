@@ -241,7 +241,13 @@ function syncUiState() {
     ["resource controls", syncResourceControlStates],
   ];
 
-  return syncTasks.every(([context, action]) => runSafe(context, action));
+  let synced = true;
+
+  syncTasks.forEach(([context, action]) => {
+    synced = runSafe(context, action) && synced;
+  });
+
+  return synced;
 }
 
 function syncAndPersist(successMessage = "Черновик сохранен в браузере.") {
