@@ -541,8 +541,6 @@ function syncResourceTransfers() {
   const resourceInputs = resourceContainer
     ? [...resourceContainer.querySelectorAll("[data-field^=\"resource_\"]")]
     : [];
-  const resourceValues = Array.from({ length: resourceInputs.length }, () => null);
-  const overflowValues = [];
   const maxBody = getBodyMaxValue();
   const transferredItems = getTransferredEquipmentItems();
   const amountBySlotIndex = new Map();
@@ -557,26 +555,8 @@ function syncResourceTransfers() {
     }
   });
 
-  transferredItems.forEach((item) => {
-    const targetIndex = Number.isFinite(item.slotIndex) ? item.slotIndex - 1 : -1;
-
-    if (targetIndex >= 0 && targetIndex < resourceValues.length && !resourceValues[targetIndex]) {
-      resourceValues[targetIndex] = item;
-    } else {
-      overflowValues.push(item);
-    }
-  });
-
-  if (overflowValues.length > 0) {
-    resourceValues.forEach((entry, index) => {
-      if (!entry && overflowValues.length > 0) {
-        resourceValues[index] = overflowValues.shift() || null;
-      }
-    });
-  }
-
   resourceInputs.forEach((input, index) => {
-    const nextResource = resourceValues[index] || null;
+    const nextResource = transferredItems[index] || null;
     const nextValue = nextResource
       ? formatResourceEntry(
           nextResource.name,
