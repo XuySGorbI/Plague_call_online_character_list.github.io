@@ -325,6 +325,8 @@ const equipmentPropertiesContainers = [...document.querySelectorAll("[data-equip
 const saveStatus = document.getElementById("save-status");
 const resetButton = document.getElementById("reset-sheet");
 const themeToggleButton = document.getElementById("theme-toggle");
+const importJsonButton = document.getElementById("import-json");
+const importJsonFileInput = document.getElementById("import-json-file");
 const exportJsonButton = document.getElementById("export-json");
 
 const state = {
@@ -416,6 +418,55 @@ function exportStateAsJson() {
   link.remove();
   URL.revokeObjectURL(url);
   setStatus("JSON экспортирован.");
+}
+
+function applyStateToUi() {
+  fieldElements.forEach((element) => {
+    const key = element.dataset.field;
+    const defaultValue = element.dataset.defaultValue || "";
+    element.value = state.fields[key] || defaultValue;
+  });
+
+  trackElements.forEach(createDots);
+  syncUiState();
+}
+
+function importStateFromJson(file) {
+  if (!file) {
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.addEventListener("load", () => {
+    try {
+      const parsed = JSON.parse(String(reader.result || ""));
+      const importedState = parsed?.state ?? parsed;
+      const nextFields = importedState?.fields ?? {};
+      const nextTracks = importedState?.tracks ?? {};
+      const nextTheme = parsed?.theme;
+
+      state.fields = { ...nextFields };
+      state.tracks = { ...nextTracks };
+
+      if (nextTheme === "light" || nextTheme === "dark") {
+        applyTheme(nextTheme);
+        storeTheme(nextTheme);
+      }
+
+      applyStateToUi();
+      persistState("JSON импортирован и сохранен.");
+    } catch (error) {
+      console.error("Не удалось импортировать JSON", error);
+      setStatus("Не удалось импортировать JSON.");
+    } finally {
+      if (importJsonFileInput) {
+        importJsonFileInput.value = "";
+      }
+    }
+  });
+
+  reader.readAsText(file, "utf-8");
 }
 
 function persistState(message = "Черновик сохранен в браузере.") {
@@ -1007,6 +1058,12 @@ themeToggleButton?.addEventListener("click", () => {
   const nextTheme = document.body.dataset.theme === "dark" ? "light" : "dark";
   applyTheme(nextTheme);
   storeTheme(nextTheme);
+});
+importJsonButton?.addEventListener("click", () => {
+  importJsonFileInput?.click();
+});
+importJsonFileInput?.addEventListener("change", () => {
+  importStateFromJson(importJsonFileInput.files?.[0]);
 });
 exportJsonButton?.addEventListener("click", exportStateAsJson);
 syncUiState();

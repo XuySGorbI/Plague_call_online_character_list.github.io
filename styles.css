@@ -434,12 +434,12 @@ body[data-theme="dark"]::before {
 
 .equipment-legend {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 2.2rem minmax(0, 1fr) 1.6rem 4.8rem;
   align-items: center;
   gap: 0.8rem;
   width: 100%;
   margin-top: -2px;
-  padding-inline: 2.55rem 0.1rem;
+  padding-inline: 0.1rem;
   font-family: "Book Antiqua", "Palatino Linotype", serif;
   font-size: 0.9rem;
   font-weight: 600;
@@ -447,8 +447,25 @@ body[data-theme="dark"]::before {
   letter-spacing: 0.02em;
 }
 
+.equipment-legend__name {
+  grid-column: 2;
+}
+
 .equipment-legend__resource {
-  justify-self: end;
+  grid-column: 3;
+  justify-self: center;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .line-list {
