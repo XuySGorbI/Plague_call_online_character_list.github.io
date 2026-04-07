@@ -237,12 +237,91 @@ function createTalentTrees() {
 
 createTalentTrees();
 
+function createEquipmentProperties() {
+  const containers = [...document.querySelectorAll("[data-equipment-properties]")];
+
+  containers.forEach((container) => {
+    const count = Number(container.dataset.count || 0);
+    const maxPairs = Number(container.dataset.maxPairs || 0);
+
+    container.innerHTML = "";
+
+    const header = document.createElement("div");
+    header.className = "equipment-properties__header";
+    header.innerHTML = `
+      <span class="equipment-properties__head equipment-properties__head--large">Большое</span>
+      <span class="equipment-properties__head equipment-properties__head--name">Название</span>
+      <span class="equipment-properties__head equipment-properties__head--traits">Свойства</span>
+    `;
+    container.append(header);
+
+    for (let equipmentIndex = 1; equipmentIndex <= count; equipmentIndex += 1) {
+      const row = document.createElement("section");
+      row.className = "equipment-properties__row";
+      row.dataset.equipmentPropsIndex = String(equipmentIndex);
+      row.hidden = true;
+
+      const largeToggle = document.createElement("button");
+      largeToggle.type = "button";
+      largeToggle.className = "equipment-properties__toggle";
+      largeToggle.dataset.equipmentPropsLargeKey = `equipmentTraitLarge_${equipmentIndex}`;
+      largeToggle.setAttribute("aria-label", `Снаряжение ${equipmentIndex}: большое или двуручное`);
+      largeToggle.setAttribute("aria-pressed", "false");
+
+      largeToggle.addEventListener("click", () => {
+        const stateKey = largeToggle.dataset.equipmentPropsLargeKey;
+        const nextState = !Boolean(state.fields[stateKey]);
+        state.fields[stateKey] = nextState;
+        syncAndPersist("Свойства снаряжения обновлены и сохранены.");
+      });
+
+      const name = document.createElement("div");
+      name.className = "equipment-properties__name";
+
+      const traits = document.createElement("div");
+      traits.className = "equipment-properties__traits";
+
+      for (let pairIndex = 1; pairIndex <= maxPairs; pairIndex += 1) {
+        const pair = document.createElement("div");
+        pair.className = "equipment-properties__pair";
+        pair.dataset.equipmentPropsPair = String(pairIndex);
+        pair.hidden = true;
+
+        const positiveInput = document.createElement("input");
+        positiveInput.type = "text";
+        positiveInput.className = "line-list__input line-list__input--compact equipment-properties__input";
+        positiveInput.dataset.field = `equipmentTrait_${equipmentIndex}_positive_${pairIndex}`;
+        positiveInput.setAttribute("aria-label", `Снаряжение ${equipmentIndex}: свойство ${pairIndex}`);
+
+        const separator = document.createElement("span");
+        separator.className = "equipment-properties__separator";
+        separator.textContent = "но";
+
+        const negativeInput = document.createElement("input");
+        negativeInput.type = "text";
+        negativeInput.className = "line-list__input line-list__input--compact equipment-properties__input";
+        negativeInput.dataset.field = `equipmentTrait_${equipmentIndex}_negative_${pairIndex}`;
+        negativeInput.setAttribute("aria-label", `Снаряжение ${equipmentIndex}: недостаток ${pairIndex}`);
+
+        pair.append(positiveInput, separator, negativeInput);
+        traits.append(pair);
+      }
+
+      row.append(largeToggle, name, traits);
+      container.append(row);
+    }
+  });
+}
+
+createEquipmentProperties();
+
 const fieldElements = [...document.querySelectorAll("[data-field]")];
 const trackElements = [...document.querySelectorAll("[data-track]")];
 const dynamicTrackElements = trackElements.filter((trackElement) => trackElement.dataset.trackLimitField);
 const thresholdLists = [...document.querySelectorAll("[data-threshold-field]")];
 const dynamicLineLists = [...document.querySelectorAll("[data-dynamic-limit-field]")];
 const talentTreeContainers = [...document.querySelectorAll("[data-talent-tree]")];
+const equipmentPropertiesContainers = [...document.querySelectorAll("[data-equipment-properties]")];
 const saveStatus = document.getElementById("save-status");
 const resetButton = document.getElementById("reset-sheet");
 const themeToggleButton = document.getElementById("theme-toggle");
@@ -344,6 +423,7 @@ function syncUiState() {
     ["dynamic lists", syncDynamicLineLists],
     ["dynamic tracks", syncDynamicTracks],
     ["talent tree", syncTalentTrees],
+    ["equipment properties", syncEquipmentProperties],
     ["durability tones", syncDurabilityFields],
     ["resource transfer", syncResourceTransfers],
     ["resource controls", syncResourceControlStates],
@@ -572,6 +652,22 @@ function getDurabilityColor(value) {
   return `rgb(${red}, ${green}, ${blue})`;
 }
 
+function parseEquipmentCondition(value) {
+  const match = String(value).trim().match(/^\s*(\d+(?:[.,]\d+)?)\s*\/\s*(\d+(?:[.,]\d+)?)\s*$/);
+
+  if (!match) {
+    return {
+      current: null,
+      max: null,
+    };
+  }
+
+  return {
+    current: Number.parseFloat(match[1].replace(",", ".")),
+    max: Number.parseFloat(match[2].replace(",", ".")),
+  };
+}
+
 function syncDurabilityFields() {
   const durabilityFields = [...document.querySelectorAll("[data-durability-tone]")];
 
@@ -594,6 +690,53 @@ function syncDurabilityFields() {
 
     field.classList.add("is-toned");
     field.style.setProperty("--durability-color", getDurabilityColor(durabilityValue));
+  });
+}
+
+function syncEquipmentProperties() {
+  equipmentPropertiesContainers.forEach((container) => {
+    const rows = [...container.querySelectorAll(".equipment-properties__row")];
+
+    rows.forEach((row, rowIndex) => {
+      const equipmentIndex = rowIndex + 1;
+      const equipmentFieldKey = `equipment_${equipmentIndex}`;
+      const conditionFieldKey = `equipmentCondition_${equipmentIndex}`;
+      const equipmentRow = document.querySelector(`[data-field="${equipmentFieldKey}"]`)?.closest(".line-list__row");
+      const equipmentName = String(
+        state.fields[equipmentFieldKey] ?? document.querySelector(`[data-field="${equipmentFieldKey}"]`)?.value ?? "",
+      ).trim();
+      const conditionValue = String(
+        state.fields[conditionFieldKey] ?? document.querySelector(`[data-field="${conditionFieldKey}"]`)?.value ?? "",
+      ).trim();
+      const parsedCondition = parseEquipmentCondition(conditionValue);
+      const maxQuality = Math.max(0, Math.floor(parsedCondition.max || 0));
+      const basePairCount = Math.max(0, maxQuality - 1);
+      const largeStateKey = `equipmentTraitLarge_${equipmentIndex}`;
+      const isLarge = Boolean(state.fields[largeStateKey]);
+      const pairCount = Math.min(
+        Number(container.dataset.maxPairs || 0),
+        Math.max(0, basePairCount * (isLarge ? 2 : 1)),
+      );
+      const isVisible = Boolean(equipmentName) && basePairCount > 0 && !equipmentRow?.hidden;
+      const toggle = row.querySelector(".equipment-properties__toggle");
+      const nameElement = row.querySelector(".equipment-properties__name");
+      const pairs = [...row.querySelectorAll(".equipment-properties__pair")];
+
+      row.hidden = !isVisible;
+
+      if (toggle) {
+        toggle.classList.toggle("is-active", isLarge);
+        toggle.setAttribute("aria-pressed", String(isLarge));
+      }
+
+      if (nameElement) {
+        nameElement.textContent = equipmentName;
+      }
+
+      pairs.forEach((pair, pairIndex) => {
+        pair.hidden = !isVisible || pairIndex >= pairCount;
+      });
+    });
   });
 }
 
