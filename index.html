@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Онлайн-лист персонажа</title>
-    <link rel="stylesheet" href="styles.css?v=20260407-14" />
+    <link rel="stylesheet" href="styles.css?v=20260407-15" />
   </head>
   <body>
     <main class="app-shell">
@@ -18,6 +18,9 @@
           </p>
         </div>
         <div class="topbar__actions">
+          <button type="button" class="action-button" id="export-json">
+            Экспорт JSON
+          </button>
           <button type="button" class="action-button" id="theme-toggle" aria-pressed="false">
             Тёмная тема
           </button>
@@ -94,6 +97,10 @@
                   <input type="text" data-field="equipmentMultiplier" data-default-value="1.5" />
                 </label>
                 <span class="sub-control__meta" id="equipment-capacity">0 мест</span>
+              </div>
+              <div class="equipment-legend" aria-hidden="true">
+                <span class="equipment-legend__name">Название</span>
+                <span class="equipment-legend__resource">Ресурс</span>
               </div>
               <div
                 class="line-list line-list--indexed"
@@ -251,6 +258,6 @@
       </section>
     </main>
 
-    <script src="script.js?v=20260407-14"></script>
+    <script src="script.js?v=20260407-15"></script>
   </body>
 </html>

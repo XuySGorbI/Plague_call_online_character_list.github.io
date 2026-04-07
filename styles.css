@@ -432,6 +432,25 @@ body[data-theme="dark"]::before {
   text-align: left;
 }
 
+.equipment-legend {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  margin-top: -2px;
+  padding-inline: 2.55rem 0.1rem;
+  font-family: "Book Antiqua", "Palatino Linotype", serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+}
+
+.equipment-legend__resource {
+  justify-self: end;
+}
+
 .line-list {
   display: grid;
   gap: 10px;

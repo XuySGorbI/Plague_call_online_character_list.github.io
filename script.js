@@ -325,6 +325,7 @@ const equipmentPropertiesContainers = [...document.querySelectorAll("[data-equip
 const saveStatus = document.getElementById("save-status");
 const resetButton = document.getElementById("reset-sheet");
 const themeToggleButton = document.getElementById("theme-toggle");
+const exportJsonButton = document.getElementById("export-json");
 
 const state = {
   fields: {},
@@ -395,6 +396,26 @@ function writeStorage() {
     setStatus("Не получилось сохранить черновик в браузере.");
     return false;
   }
+}
+
+function exportStateAsJson() {
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    theme: document.body.dataset.theme || "light",
+    state,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const dateStamp = new Date().toISOString().slice(0, 10);
+
+  link.href = url;
+  link.download = `character-sheet-${dateStamp}.json`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  setStatus("JSON экспортирован.");
 }
 
 function persistState(message = "Черновик сохранен в браузере.") {
@@ -987,6 +1008,7 @@ themeToggleButton?.addEventListener("click", () => {
   applyTheme(nextTheme);
   storeTheme(nextTheme);
 });
+exportJsonButton?.addEventListener("click", exportStateAsJson);
 syncUiState();
 window.addEventListener("beforeunload", () => {
   writeStorage();
